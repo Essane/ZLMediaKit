@@ -99,6 +99,7 @@ const string kResetWhenRePlay = GENERAL_FIELD "resetWhenRePlay";
 const string kMergeWriteMS = GENERAL_FIELD "mergeWriteMS";
 const string kCheckNvidiaDev = GENERAL_FIELD "check_nvidia_dev";
 const string kEnableFFmpegLog = GENERAL_FIELD "enable_ffmpeg_log";
+const string kEnableHWCodec = GENERAL_FIELD "enable_hw_codec";
 const string kWaitTrackReadyMS = GENERAL_FIELD "wait_track_ready_ms";
 const string kWaitAudioTrackDataMS = GENERAL_FIELD "wait_audio_track_data_ms";
 const string kWaitAddTrackMS = GENERAL_FIELD "wait_add_track_ms";
@@ -120,6 +121,7 @@ static onceToken token([]() {
     mINI::Instance()[kMediaServerId] = makeRandStr(16);
     mINI::Instance()[kCheckNvidiaDev] = 1;
     mINI::Instance()[kEnableFFmpegLog] = 0;
+    mINI::Instance()[kEnableHWCodec] = 1;
     mINI::Instance()[kWaitTrackReadyMS] = 10000;
     mINI::Instance()[kWaitAudioTrackDataMS] = 1000;
     mINI::Instance()[kWaitAddTrackMS] = 3000;
