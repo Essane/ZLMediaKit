@@ -313,9 +313,8 @@ private:
 template <bool decoder = true>
 static inline const AVCodec *getCodec(const std::initializer_list<CodecName> &codec_list) {
     const AVCodec *ret = nullptr;
-    for (auto it = codec_list.end(); it != codec_list.begin();) {
-        --it;
-        ret = it->getCodec<decoder>();
+    for (int i = codec_list.size(); i >= 1; --i) {
+        ret = codec_list.begin()[i - 1].getCodec<decoder>();
         if (ret) {
             return ret;
         }
