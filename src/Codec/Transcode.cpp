@@ -310,14 +310,12 @@ private:
     enum AVCodecID _id;
 };
 
-// Iterate in declared order (first to last) so that software codecs listed
-// earlier in the initializer_list are preferred over hardware-specific ones
-// (e.g. hevc is tried before hevc_qsv/hevc_cuvid/hevc_nvmpi).
 template <bool decoder = true>
 static inline const AVCodec *getCodec(const std::initializer_list<CodecName> &codec_list) {
     const AVCodec *ret = nullptr;
-    for (const auto &name : codec_list) {
-        ret = name.getCodec<decoder>();
+    for (auto it = codec_list.end(); it != codec_list.begin();) {
+        --it;
+        ret = it->getCodec<decoder>();
         if (ret) {
             return ret;
         }
