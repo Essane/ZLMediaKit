@@ -268,6 +268,9 @@ extern const std::string kBroadcastPlayerCountChanged;
 // 绑定的本地网卡ip  [AUTO-TRANSLATED:daa90832]
 // Bound local network card ip
 extern const std::string kListenIP;
+// 是否启用硬件编解码器（qsv/videotoolbox/cuvid/nvmpi），置0则只使用软件编解码
+// Whether to enable hardware codecs (qsv/videotoolbox/cuvid/nvmpi); set to 0 to use software codecs only
+extern const std::string kEnableHWCodec;
 extern const std::string kOpusBitrate;
 extern const std::string kAacBitrate;
 } // namespace General

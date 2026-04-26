@@ -351,10 +351,15 @@ FFmpegDecoder::FFmpegDecoder(const Track::Ptr &track, int thread_num, const std:
             if (codec && codec->id == AV_CODEC_ID_H264) {
                 break;
             }
-            if (checkIfSupportedNvidia()) {
-                codec = getCodec({{"libopenh264"}, {AV_CODEC_ID_H264}, {"h264_qsv"}, {"h264_videotoolbox"}, {"h264_cuvid"}, {"h264_nvmpi"}});
-            } else {
-                codec = getCodec({{"libopenh264"}, {AV_CODEC_ID_H264}, {"h264_qsv"}, {"h264_videotoolbox"}, {"h264_nvmpi"}});
+            {
+                GET_CONFIG(bool, enable_hw_codec, General::kEnableHWCodec);
+                if (enable_hw_codec && checkIfSupportedNvidia()) {
+                    codec = getCodec({{"libopenh264"}, {AV_CODEC_ID_H264}, {"h264_qsv"}, {"h264_videotoolbox"}, {"h264_cuvid"}, {"h264_nvmpi"}});
+                } else if (enable_hw_codec) {
+                    codec = getCodec({{"libopenh264"}, {AV_CODEC_ID_H264}, {"h264_qsv"}, {"h264_videotoolbox"}, {"h264_nvmpi"}});
+                } else {
+                    codec = getCodec({{"libopenh264"}, {AV_CODEC_ID_H264}});
+                }
             }
             break;
         case CodecH265:
@@ -362,10 +367,15 @@ FFmpegDecoder::FFmpegDecoder(const Track::Ptr &track, int thread_num, const std:
             if (codec && codec->id == AV_CODEC_ID_HEVC) {
                 break;
             }
-            if (checkIfSupportedNvidia()) {
-                codec = getCodec({{AV_CODEC_ID_HEVC}, {"hevc_qsv"}, {"hevc_videotoolbox"}, {"hevc_cuvid"}, {"hevc_nvmpi"}});
-            } else {
-                codec = getCodec({{AV_CODEC_ID_HEVC}, {"hevc_qsv"}, {"hevc_videotoolbox"}, {"hevc_nvmpi"}});
+            {
+                GET_CONFIG(bool, enable_hw_codec, General::kEnableHWCodec);
+                if (enable_hw_codec && checkIfSupportedNvidia()) {
+                    codec = getCodec({{AV_CODEC_ID_HEVC}, {"hevc_qsv"}, {"hevc_videotoolbox"}, {"hevc_cuvid"}, {"hevc_nvmpi"}});
+                } else if (enable_hw_codec) {
+                    codec = getCodec({{AV_CODEC_ID_HEVC}, {"hevc_qsv"}, {"hevc_videotoolbox"}, {"hevc_nvmpi"}});
+                } else {
+                    codec = getCodec({AV_CODEC_ID_HEVC});
+                }
             }
             break;
         case CodecAAC:
@@ -996,23 +1006,33 @@ FFmpegEncoder::FFmpegEncoder(const Track::Ptr &track, int thread_num) {
     switch (_codecId) {
     case CodecH264:
         codec_default = getCodec<false>({ AV_CODEC_ID_H264 });
-        if (checkIfSupportedNvidia()) {
-            codec = getCodec<false>({ { "libopenh264" },
-                                      { AV_CODEC_ID_H264 },
-                                      { "h264_qsv" },
-                                      { "h264_videotoolbox" },
-                                      { "h264_cuvid" },
-                                      { "h264_nvmpi" } });
-        } else {
-            codec = getCodec<false>({ { "libopenh264" }, { AV_CODEC_ID_H264 }, { "h264_qsv" }, { "h264_videotoolbox" }, { "h264_nvmpi" } });
+        {
+            GET_CONFIG(bool, enable_hw_codec, General::kEnableHWCodec);
+            if (enable_hw_codec && checkIfSupportedNvidia()) {
+                codec = getCodec<false>({ { "libopenh264" },
+                                          { AV_CODEC_ID_H264 },
+                                          { "h264_qsv" },
+                                          { "h264_videotoolbox" },
+                                          { "h264_cuvid" },
+                                          { "h264_nvmpi" } });
+            } else if (enable_hw_codec) {
+                codec = getCodec<false>({ { "libopenh264" }, { AV_CODEC_ID_H264 }, { "h264_qsv" }, { "h264_videotoolbox" }, { "h264_nvmpi" } });
+            } else {
+                codec = getCodec<false>({ { "libopenh264" }, { AV_CODEC_ID_H264 } });
+            }
         }
         break;
     case CodecH265:
         codec_default = getCodec<false>({ AV_CODEC_ID_HEVC });
-        if (checkIfSupportedNvidia()) {
-            codec = getCodec<false>({ { AV_CODEC_ID_HEVC }, { "hevc_qsv" }, { "hevc_videotoolbox" }, { "hevc_cuvid" }, { "hevc_nvmpi" } });
-        } else {
-            codec = getCodec<false>({ { AV_CODEC_ID_HEVC }, { "hevc_qsv" }, { "hevc_videotoolbox" }, { "hevc_nvmpi" } });
+        {
+            GET_CONFIG(bool, enable_hw_codec, General::kEnableHWCodec);
+            if (enable_hw_codec && checkIfSupportedNvidia()) {
+                codec = getCodec<false>({ { AV_CODEC_ID_HEVC }, { "hevc_qsv" }, { "hevc_videotoolbox" }, { "hevc_cuvid" }, { "hevc_nvmpi" } });
+            } else if (enable_hw_codec) {
+                codec = getCodec<false>({ { AV_CODEC_ID_HEVC }, { "hevc_qsv" }, { "hevc_videotoolbox" }, { "hevc_nvmpi" } });
+            } else {
+                codec = getCodec<false>({ AV_CODEC_ID_HEVC });
+            }
         }
         break;
     case CodecAAC:
